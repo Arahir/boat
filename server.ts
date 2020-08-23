@@ -5,7 +5,7 @@ import {
   Size,
   InboundShipment,
 } from "./types";
-import { isBefore, isEqual, compareAsc } from "date-fns";
+import { isBefore, isEqual, compareAsc, parseISO, compareDesc } from "date-fns";
 import { dataToDescription } from "./description";
 import { formatDate, getNextDay } from "./date";
 
@@ -31,37 +31,56 @@ function getInventoryPrice(
   }
 }
 
-// {product1: {2020-11-04: 33, 2020-12-01: 22}}
-type Stock = Record<string, Record<string, number>>;
-function getStock(shipments: InboundShipment[]): Stock {
-  const orderedShipments = shipments.sort(
-    (shipment1: InboundShipment, shipment2: InboundShipment) => {
-      return compareAsc(
-        shipment1.offloadCompleteTime,
-        shipment2.offloadCompleteTime
-      );
-    }
+// {product1: {stock: {2020-11-04: 33, 2020-12-01: 22}}}
+interface ProductStock {
+  perDate: Record<string, number>;
+  inboundShipments?: Date[];
+}
+type Stock = Record<string, ProductStock>;
+function getStock(shipments: InboundShipment[], toDate: Date): Stock {
+  const stockByProduct = shipments.reduce(
+    (stock: Stock, shipment: InboundShipment) => {
+      const dateString = formatDate(shipment.offloadCompleteTime);
+      for (let inventoryItem of shipment.lines) {
+        if (!inventoryItem.product || !inventoryItem.quantity) {
+          throw new Error("Invalid inventory Item");
+        }
+        const productStock = stock[inventoryItem.product];
+        if (productStock) {
+          if (productStock.perDate[dateString]) {
+            productStock.perDate[dateString] += inventoryItem.quantity;
+          } else {
+            productStock.perDate[dateString] = inventoryItem.quantity;
+          }
+        } else {
+          stock[inventoryItem.product] = {
+            perDate: {
+              [dateString]: inventoryItem.quantity,
+            },
+          };
+        }
+      }
+      return stock;
+    },
+    {}
   );
 
-  return orderedShipments.reduce((stock: Stock, shipment: InboundShipment) => {
-    const dateString = formatDate(shipment.offloadCompleteTime);
-    for (let inventoryItem of shipment.lines) {
-      if (!inventoryItem.product || !inventoryItem.quantity) {
-        throw new Error("Invalid inventory Item");
-      }
-      const productStock = stock[inventoryItem.product];
-      if (productStock) {
-        if (productStock[dateString]) {
-          productStock[dateString] += inventoryItem.quantity;
-        } else {
-          productStock[dateString] = inventoryItem.quantity;
-        }
-      } else {
-        stock[inventoryItem.product] = { [dateString]: inventoryItem.quantity };
-      }
-    }
-    return stock;
-  }, {});
+  const productNames = Object.keys(stockByProduct);
+
+  for (let productName of productNames) {
+    const deliveryDateString = Object.keys(stockByProduct[productName].perDate);
+    const deliveryDates = deliveryDateString
+      .map((dateString) => parseISO(dateString))
+      .filter((date) => isBefore(date, toDate))
+      .sort(compareDesc);
+    stockByProduct[productName].inboundShipments = deliveryDates;
+  }
+
+  // ajouté pour chaque produit la liste des dates de shipment
+  // dois je checker les inconvsistences du genre le nombre de produit augmente dans le daily inventory alors qu'il n'y a pas eu d'inbound shipment?
+  //
+
+  return stockByProduct;
 }
 
 function getSizeByProduct(products: Product[]): SizeByProduct {
@@ -86,7 +105,7 @@ export function getTotalPrice(data: any) {
   const description: Description = dataToDescription(data);
   const { fromDate, toDate } = description.billingPeriod;
   const sizeByProduct = getSizeByProduct(description.products);
-  const stock = getStock(description.inboundShipments);
+  const stock = getStock(description.inboundShipments, toDate);
   console.log(stock);
   let date = fromDate;
   while (isBefore(date, toDate) || isEqual(date, toDate)) {
@@ -149,6 +168,48 @@ const data = {
         },
       ],
       offload_complete_time: "2020-12-01T13:00:00Z",
+    },
+    {
+      id: "BGBLINEU00001",
+      lines: [
+        {
+          product: "BGBL-TSHIRT-BLUS",
+          quantity: 3,
+        },
+        {
+          product: "BGBL-TSHIRT-BLUL",
+          quantity: 30,
+        },
+      ],
+      offload_complete_time: "2020-12-11T13:00:00Z",
+    },
+    {
+      id: "BGBLINEU00001",
+      lines: [
+        {
+          product: "BGBL-TSHIRT-BLUS",
+          quantity: 3,
+        },
+        {
+          product: "BGBL-TSHIRT-BLUL",
+          quantity: 30,
+        },
+      ],
+      offload_complete_time: "2020-12-21T13:00:00Z",
+    },
+    {
+      id: "BGBLINEU00001",
+      lines: [
+        {
+          product: "BGBL-TSHIRT-BLUS",
+          quantity: 3,
+        },
+        {
+          product: "BGBL-TSHIRT-BLUL",
+          quantity: 30,
+        },
+      ],
+      offload_complete_time: "2021-01-21T13:00:00Z",
     },
   ],
   products: [
