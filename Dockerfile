@@ -3,6 +3,7 @@
 FROM node:12.17.0-alpine
 WORKDIR /usr/src/app
 COPY package*.json ./
+COPY yarn.lock ./
 COPY . .
 RUN yarn install
 RUN yarn build
@@ -13,6 +14,7 @@ FROM node:12.17.0-alpine
 
 WORKDIR /usr/src/app
 COPY package*.json ./
+COPY yarn.lock ./
 RUN yarn --only=production
 COPY --from=0 /usr/src/app/dist ./dist
 EXPOSE 8080
