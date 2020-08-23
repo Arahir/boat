@@ -1,7 +1,6 @@
-import { format } from 'date-fns'
+import { format } from "date-fns";
 import { Description } from "./types";
-import { getNextDay } from './date';
-
+import { getNextDay } from "./date";
 
 export function makeDescription(): Description {
   const from = new Date();
@@ -9,7 +8,7 @@ export function makeDescription(): Description {
   return {
     products: [],
     inboundShipments: [],
-    billingPeriod: {fromDate: from, toDate: to},
-    dailyInventory: {}
-  }
+    billingPeriod: { fromDate: from, toDate: to },
+    dailyInventory: {},
+  };
 }

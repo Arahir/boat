@@ -1,7 +1,7 @@
 {
   "name": "bigblue",
   "version": "1.0.0",
-  "main": "dist/index.js",
+  "main": "dist/server.js",
   "author": "@arahir",
   "license": "MIT",
   "dependencies": {
@@ -10,7 +10,9 @@
   },
   "scripts": {
     "test": "jest",
-    "dev": "ts-node-dev --respawn --transpile-only server.ts"
+    "dev": "ts-node-dev --respawn --transpile-only src/server.ts",
+    "start": "ts-node dist/server.js",
+    "build": "tsc -p ."
   },
   "devDependencies": {
     "@types/express": "^4.17.7",
