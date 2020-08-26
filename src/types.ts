@@ -33,3 +33,13 @@ export interface Description {
   inboundShipments: InboundShipment[];
   products: Product[];
 }
+
+// {perDate: {2020-12-11: 40}, inboundShipments: [new Date('2020-12-11')]}
+export interface ProductStock {
+  perDate: Record<string, number>;
+  inboundShipments?: Date[];
+}
+export type Stock = Record<string, ProductStock>;
+
+// {"BGBL-TSHIRT-BLUS": "S"}
+export type SizeByProduct = Record<string, Size>;

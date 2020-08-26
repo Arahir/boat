@@ -4,6 +4,8 @@ import {
   ProductQuantity,
   Size,
   InboundShipment,
+  Stock,
+  SizeByProduct,
 } from "./types";
 import {
   isBefore,
@@ -66,8 +68,6 @@ function calculatePrice(
 
   return priceForDurationAndSize * quantity;
 }
-
-type SizeByProduct = Record<string, Size>;
 
 function getInventoryPrice(
   inventory: ProductQuantity[],
@@ -145,12 +145,6 @@ function getInventoryPrice(
   return totalPrice;
 }
 
-// {product1: {stock: {2020-11-04: 33, 2020-12-01: 22}}}
-interface ProductStock {
-  perDate: Record<string, number>;
-  inboundShipments?: Date[];
-}
-type Stock = Record<string, ProductStock>;
 function getStock(shipments: InboundShipment[], toDate: Date): Stock {
   const stockByProduct = shipments.reduce(
     (stock: Stock, shipment: InboundShipment) => {
@@ -216,12 +210,15 @@ function getSizeByProduct(products: Product[]): SizeByProduct {
 }
 
 export function getTotalPrice(data: any) {
+  // transform data into Description
   const description: Description = dataToDescription(data);
   const { fromDate, toDate } = description.billingPeriod;
   const sizeByProduct = getSizeByProduct(description.products);
   const stock = getStock(description.inboundShipments, toDate);
 
   let date = fromDate;
+
+  // {2020-12-11: 23.54}
   const pricePerDay: Record<string, number> = {};
 
   while (isBefore(date, toDate) || isEqual(date, toDate)) {
