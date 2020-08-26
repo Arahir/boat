@@ -13,7 +13,6 @@ import {
   compareDesc,
   differenceInCalendarDays,
 } from "date-fns";
-import { dataToDescription } from "./description";
 import { formatDate, getNextDay, parseISO } from "./date";
 
 const priceTable: Record<number, Record<string, number>> = {
@@ -149,7 +148,7 @@ function getStock(shipments: InboundShipment[], toDate: Date): Stock {
     (stock: Stock, shipment: InboundShipment) => {
       const dateString = formatDate(shipment.offloadCompleteTime);
       for (let inventoryItem of shipment.lines) {
-        if (!inventoryItem.product || !inventoryItem.quantity) {
+        if (!inventoryItem.product || inventoryItem.quantity == null) {
           throw new Error("Invalid inventory Item");
         }
         const productStock = stock[inventoryItem.product];
@@ -208,22 +207,20 @@ function getSizeByProduct(products: Product[]): SizeByProduct {
   );
 }
 
-export function getTotalPrice(data: any) {
+export function getTotalPrice(description: Description) {
   // transform data into Description
-  const description: Description = dataToDescription(data);
   const { fromDate, toDate } = description.billingPeriod;
   const sizeByProduct = getSizeByProduct(description.products);
   const stock = getStock(description.inboundShipments, toDate);
-
   let date = fromDate;
 
-  // {2020-12-11: 23.54}
   const pricePerDay: Record<string, number> = {};
 
   while (isBefore(date, toDate) || isEqual(date, toDate)) {
     const dateString = formatDate(date);
     const inventory: ProductQuantity[] = description.dailyInventory[dateString];
     if (!inventory) {
+      console.log("missing inventory");
       throw new Error(`Missing inventory for day ${dateString}`);
     }
     const price: number = getInventoryPrice(

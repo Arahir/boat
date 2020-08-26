@@ -44,6 +44,15 @@ describe("Description Parsing", () => {
       expect(() => dataToDescription(data)).toThrow();
     });
 
+    test("toDate can be equal to fromDate", () => {
+      const date = new Date();
+
+      data.billing_period.to_date = formatDate(date);
+      data.billing_period.from_date = formatDate(date);
+
+      expect(() => dataToDescription(data)).not.toThrow();
+    });
+
     test("should parse billing_period", () => {
       const actual = dataToDescription(data).billingPeriod;
       const expected = {

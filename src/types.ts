@@ -1,9 +1,10 @@
-export enum Size {
-  XS,
-  S,
-  M,
-  L,
-}
+export type Size = "XS" | "S" | "M" | "L";
+export const SizeList: Record<string, boolean> = {
+  XS: true,
+  S: true,
+  M: true,
+  L: true,
+};
 
 export interface Product {
   id: string;

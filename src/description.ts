@@ -5,6 +5,7 @@ import {
   ProductQuantity,
   Product,
   Size,
+  SizeList,
 } from "./types";
 import { isAfter, isValid } from "date-fns";
 import { parseISO } from "./date";
@@ -87,7 +88,7 @@ function parseProduct(product: DataProduct): Product {
   if (
     !product.id ||
     !product.size ||
-    !(product.size in Size) ||
+    !SizeList[product.size] ||
     !product.create_time
   ) {
     throw new Error("invalid product");
@@ -96,7 +97,7 @@ function parseProduct(product: DataProduct): Product {
 
   return {
     id: product.id,
-    size: (product.size as unknown) as Size,
+    size: product.size as Size,
     createTime,
   };
 }
