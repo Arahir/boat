@@ -10,12 +10,11 @@ import {
 import {
   isBefore,
   isEqual,
-  parseISO,
   compareDesc,
   differenceInCalendarDays,
 } from "date-fns";
 import { dataToDescription } from "./description";
-import { formatDate, getNextDay } from "./date";
+import { formatDate, getNextDay, parseISO } from "./date";
 
 const priceTable: Record<number, Record<string, number>> = {
   1: {

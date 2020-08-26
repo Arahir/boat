@@ -6,20 +6,21 @@ import {
   Product,
   Size,
 } from "./types";
-import { parseISO, isAfter, isValid } from "date-fns";
+import { isAfter, isValid } from "date-fns";
+import { parseISO } from "./date";
 
 export function parseBillingPeriod(billingPeriod?: {
   from_date?: string;
   to_date?: string;
 }): BillingPeriod {
   if (!billingPeriod || !billingPeriod.from_date || !billingPeriod.to_date) {
-    throw new Error("ERROR_DESCRIPTION");
+    throw new Error("missing billing period");
   }
   const fromDate = parseISO(billingPeriod.from_date);
   const toDate = parseISO(billingPeriod.to_date);
 
   if (!isValid(fromDate) || !isValid(toDate) || isAfter(fromDate, toDate)) {
-    throw new Error("ERROR_DESCRIPTION");
+    throw new Error("billing period is invalid");
   }
 
   return {
@@ -40,13 +41,13 @@ function parseInboundShipment(shipment: ShipmentData): InboundShipment {
     !Array.isArray(shipment.lines) ||
     !shipment.offload_complete_time
   ) {
-    throw new Error("ERROR_DESCRIPTION");
+    throw new Error("missing shipment data");
   }
 
   const offloadCompleteTime = parseISO(shipment.offload_complete_time);
 
   if (!isValid(offloadCompleteTime)) {
-    throw new Error("ERROR_DESCRIPTION");
+    throw new Error("invalid shipment offload complete time");
   }
 
   return {
@@ -58,7 +59,7 @@ function parseInboundShipment(shipment: ShipmentData): InboundShipment {
 
 function parseInboundShipments(shipments?: Array<ShipmentData>) {
   if (!Array.isArray(shipments)) {
-    throw new Error("ERROR_DESCRIPTION");
+    throw new Error("inbound_shipments is missing");
   }
 
   return shipments.map(parseInboundShipment);

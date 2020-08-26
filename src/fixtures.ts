@@ -2,7 +2,10 @@ import { Description } from "./types";
 import { getNextDay } from "./date";
 
 export const descriptionData = {
-  billing_period: { from_date: "2020-12-30", to_date: "2020-12-31" },
+  billing_period: {
+    from_date: "2020-12-30",
+    to_date: "2020-12-31",
+  },
   daily_inventory: {
     "2020-12-30": [
       { product: "BGBL-TSHIRT-BLUS", quantity: 9 },
