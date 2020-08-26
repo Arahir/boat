@@ -37,6 +37,38 @@ describe("getTotalPrice", () => {
 
       expect(() => getTotalPrice(description)).toThrow();
     });
+
+    test("should fail if inventory as more item than stock", () => {
+      const productName = "BGBL-TSHIRT-BLUM";
+      const productQuantity = 1;
+      const shipmentDateString = "2020-12-15";
+      const shipment: InboundShipment = makeShipment(
+        productName,
+        productQuantity,
+        shipmentDateString
+      );
+
+      const shipmentDate = parseISO(shipmentDateString);
+      const after = addYears(shipmentDate, 366);
+      const period: BillingPeriod = {
+        fromDate: after,
+        toDate: after,
+      };
+      const dailyInventory: Record<string, ProductQuantity[]> = {
+        [formatDate(after)]: [
+          { product: productName, quantity: productQuantity + 2 },
+        ],
+      };
+      const products: Product[] = [makeProduct(productName, "M")];
+      const description = makeDescription({
+        inboundShipments: [shipment],
+        dailyInventory,
+        products,
+        billingPeriod: period,
+      });
+
+      expect(() => getTotalPrice(description)).toThrow();
+    });
   });
 
   test("it should be free for 2 weeks", () => {
@@ -158,6 +190,40 @@ describe("getTotalPrice", () => {
 
     expect(getTotalPrice(description)).toEqual({
       [formatDate(after)]: 0.23,
+    });
+  });
+
+  test("it should start paying after 2 weeks", () => {
+    const productName = "BGBL-TSHIRT-BLUM";
+    const productQuantity = 2;
+    const shipmentDateString = "2020-12-15";
+    const shipment: InboundShipment = makeShipment(
+      productName,
+      productQuantity,
+      shipmentDateString
+    );
+
+    const shipmentDate = parseISO(shipmentDateString);
+    const after = addDays(shipmentDate, 16);
+    const period: BillingPeriod = {
+      fromDate: after,
+      toDate: after,
+    };
+    const dailyInventory: Record<string, ProductQuantity[]> = {
+      [formatDate(after)]: [
+        { product: productName, quantity: productQuantity },
+      ],
+    };
+    const products: Product[] = [makeProduct(productName, "M")];
+    const description = makeDescription({
+      inboundShipments: [shipment],
+      dailyInventory,
+      products,
+      billingPeriod: period,
+    });
+
+    expect(getTotalPrice(description)).toEqual({
+      [formatDate(after)]: 0.17 * productQuantity,
     });
   });
 });
