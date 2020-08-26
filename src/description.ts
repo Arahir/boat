@@ -71,7 +71,7 @@ function parseDailyInventory(inventory: Record<string, ProductQuantity[]>) {
     Array.isArray(inventory) ||
     !(typeof inventory === "object")
   ) {
-    throw new Error("ERROR_DESCRIPTION");
+    throw new Error("missing inventory");
   }
 
   return inventory;
@@ -90,7 +90,7 @@ function parseProduct(product: DataProduct): Product {
     !(product.size in Size) ||
     !product.create_time
   ) {
-    throw new Error("DESCRIPTION_ERROR");
+    throw new Error("invalid product");
   }
   const createTime = parseISO(product.create_time);
 

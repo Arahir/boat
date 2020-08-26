@@ -1,7 +1,7 @@
 import { dataToDescription } from "./description";
 import { descriptionData } from "./fixtures";
 import { getNextDay, formatDate, parseISO } from "./date";
-import { ProductQuantity } from "./types";
+import { ProductQuantity, InboundShipment } from "./types";
 
 describe("Description Parsing", () => {
   let data: any;
@@ -98,6 +98,26 @@ describe("Description Parsing", () => {
       shipment.offload_complete_time = "2020-12-32T13:00:00Z";
       data.inbound_shipments = { shipment };
 
+      expect(() => dataToDescription(data)).toThrow();
+    });
+
+    test("should parse shipment", () => {
+      data.inbound_shipments = [shipment];
+      const actual = dataToDescription(data).inboundShipments;
+      const expected: InboundShipment[] = [
+        {
+          id: shipment.id!,
+          lines: shipment.lines!,
+          offloadCompleteTime: parseISO(shipment.offload_complete_time!),
+        },
+      ];
+
+      expect(actual).toEqual(expected);
+    });
+  });
+
+  describe("dailyInventory", () => {
+    test("dailyInventory should be an object", () => {
       expect(() => dataToDescription(data)).toThrow();
     });
   });
