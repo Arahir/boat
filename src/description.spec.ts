@@ -118,7 +118,12 @@ describe("Description Parsing", () => {
 
   describe("dailyInventory", () => {
     test("dailyInventory should be an object", () => {
+      delete data.daily_inventory;
       expect(() => dataToDescription(data)).toThrow();
+      data.dailyInventory = [];
+      expect(() => dataToDescription(data)).toThrow();
+      data.daily_inventory = {};
+      expect(() => dataToDescription(data)).not.toThrow();
     });
   });
 });
