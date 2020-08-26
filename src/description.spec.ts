@@ -1,7 +1,7 @@
 import { dataToDescription } from "./description";
 import { descriptionData } from "./fixtures";
 import { getNextDay, formatDate, parseISO } from "./date";
-import { ProductQuantity, InboundShipment } from "./types";
+import { ProductQuantity, InboundShipment, Size } from "./types";
 
 describe("Description Parsing", () => {
   let data: any;
@@ -124,6 +124,55 @@ describe("Description Parsing", () => {
       expect(() => dataToDescription(data)).toThrow();
       data.daily_inventory = {};
       expect(() => dataToDescription(data)).not.toThrow();
+    });
+  });
+
+  describe("products", () => {
+    let product: { id?: string; size?: string; create_time?: string };
+    beforeEach(() => {
+      product = {
+        id: "BGBL-TSHIRT-BLUS",
+        size: "S",
+        create_time: "2020-11-01T13:22:33Z",
+      };
+    });
+    test("products should be defined", () => {
+      delete data.products;
+      expect(() => dataToDescription(data)).toThrow();
+    });
+
+    test("id should be defined", () => {
+      delete product.id;
+      data.products = [product];
+      expect(() => dataToDescription(data)).toThrow();
+    });
+    test("size should be defined", () => {
+      delete product.size;
+      data.products = [product];
+      expect(() => dataToDescription(data)).toThrow();
+    });
+    test("size should be valid", () => {
+      product.size = "B";
+      data.products = [product];
+      expect(() => dataToDescription(data)).toThrow();
+    });
+    test("create_time should be defined", () => {
+      delete product.create_time;
+      data.products = [product];
+      expect(() => dataToDescription(data)).toThrow();
+    });
+    test("parse product", () => {
+      data.products = [product];
+      const actual = dataToDescription(data).products;
+      const expected = [
+        {
+          id: product.id!,
+          size: product.size!,
+          createTime: parseISO(product.create_time!),
+        },
+      ];
+
+      expect(actual).toEqual(expected);
     });
   });
 });
