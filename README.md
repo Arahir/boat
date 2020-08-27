@@ -179,7 +179,7 @@ Prenons cette exemple:
 			// on regarde le nombre de produit disponible (2)
 			// on compare la date du shipment à la date de l'inventaire -> 9j
 			// on calcule le prix 2 * 0 et on l'ajoute au prix total
-		(pour le shipment suivant, le resultat serai 3 * )
+		(pour le shipment suivant, le resultat serai 3 * 0.2 -> 0.6)
 ```
 
 Les Défauts:
@@ -188,4 +188,3 @@ Les Défauts:
 - le code manque de commentaires et mériterai refacto
 - tous les cas d'erreurs ne sont pas couverts dans les tests
 - ajouter des tests d'intégration avec [Supertest](https://github.com/visionmedia/supertest) par exemple
-
