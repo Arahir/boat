@@ -1,7 +1,5 @@
 # Gestion des stocks
 
-
-
 ## Comment lancer le projet?
 
 en dev :
@@ -10,8 +8,6 @@ en dev :
 yarn install
 yarn dev
 ```
-
-
 
 en "prod":
 
@@ -27,9 +23,13 @@ troubleshot:
   sudo chmod 755 start.sh
   ```
 
-
-
 L'api est disponible à l'url http://localhost:8080
+
+## Les test
+
+```bash
+  yarn test
+```
 
 ## L'algorithme
 
@@ -98,11 +98,9 @@ Prenons cette exemple:
 }
 ```
 
+- _dataToDescription_ permet de valider les champs de premiers niveaux et de parser la donnée
 
-
-- *dataToDescription* permet de valider les champs de premiers niveaux et de parser la donnée
-
-- *getSizeByProduct* permet de faire correspondre la référence produit et sa taille
+- _getSizeByProduct_ permet de faire correspondre la référence produit et sa taille
 
   ```js
   # sizeByProduct
@@ -112,8 +110,6 @@ Prenons cette exemple:
     'BGBL-TSHIRT-BLUL': 'L'
   }
   ```
-
-   
 
 - getStock permet de connaître le nombre de produit disponible par inboundShipment
 
@@ -186,10 +182,10 @@ Prenons cette exemple:
 		(pour le shipment suivant, le resultat serai 3 * )
 ```
 
-
-
 Les Défauts:
 
 - j'aurai du utiliser un json validor comme https://github.com/tdegrunt/jsonschema pour la validation au lieu de le faire "manuellement"
 - le code manque de commentaires et mériterai refacto
 - tous les cas d'erreurs ne sont pas couverts dans les tests
+- ajouter des tests d'intégration avec [Supertest](https://github.com/visionmedia/supertest) par exemple
+
