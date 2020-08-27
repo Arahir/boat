@@ -25,7 +25,7 @@ troubleshot:
 
 L'api est disponible à l'url http://localhost:8080
 
-## Les test
+## Les tests
 
 ```bash
   yarn test
@@ -111,7 +111,7 @@ Prenons cette exemple:
   }
   ```
 
-- *getStock* permet de connaître le nombre de produit disponible par produit et par inboundShipment
+- _getStock_ permet de connaître le nombre de produit disponible par produit et par inboundShipment
 
   ```js
   {
@@ -181,8 +181,6 @@ Prenons cette exemple:
 			// on calcule le prix 2 * 0 et on l'ajoute au prix total
 		(pour le shipment suivant, le resultat serai 3 * 0.2 -> 0.6)
 ```
-
-
 
 ## Les défauts:
 
