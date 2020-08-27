@@ -111,7 +111,7 @@ Prenons cette exemple:
   }
   ```
 
-- getStock permet de connaître le nombre de produit disponible par inboundShipment
+- *getStock* permet de connaître le nombre de produit disponible par produit et par inboundShipment
 
   ```js
   {
@@ -182,9 +182,12 @@ Prenons cette exemple:
 		(pour le shipment suivant, le resultat serai 3 * 0.2 -> 0.6)
 ```
 
-Les Défauts:
+
+
+## Les défauts:
 
 - j'aurai du utiliser un json validor comme https://github.com/tdegrunt/jsonschema pour la validation au lieu de le faire "manuellement"
-- le code manque de commentaires et mériterai refacto
+- le code manque de commentaires et mériterai un refactor
 - tous les cas d'erreurs ne sont pas couverts dans les tests
 - ajouter des tests d'intégration avec [Supertest](https://github.com/visionmedia/supertest) par exemple
+- ma "solution" pour gérer les billing period sans timezone est "légérement" hacky
