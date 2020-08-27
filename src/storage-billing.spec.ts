@@ -226,4 +226,43 @@ describe("getTotalPrice", () => {
       [formatDate(after)]: 0.17 * productQuantity,
     });
   });
+  test("it should use multiple shipments if necessary", () => {
+    const productName = "BGBL-TSHIRT-BLUM";
+    const productQuantity = 4;
+    const shipment1DateString = "2020-12-15";
+    const shipment1: InboundShipment = makeShipment(
+      productName,
+      productQuantity / 2,
+      shipment1DateString
+    );
+    const shipment2DateString = "2020-12-14";
+    const shipment2: InboundShipment = makeShipment(
+      productName,
+      productQuantity / 2,
+      shipment2DateString
+    );
+
+    const shipmentDate = parseISO(shipment1DateString);
+    const after = addDays(shipmentDate, 16);
+    const period: BillingPeriod = {
+      fromDate: after,
+      toDate: after,
+    };
+    const dailyInventory: Record<string, ProductQuantity[]> = {
+      [formatDate(after)]: [
+        { product: productName, quantity: productQuantity },
+      ],
+    };
+    const products: Product[] = [makeProduct(productName, "M")];
+    const description = makeDescription({
+      inboundShipments: [shipment1, shipment2],
+      dailyInventory,
+      products,
+      billingPeriod: period,
+    });
+
+    expect(getTotalPrice(description)).toEqual({
+      [formatDate(after)]: 0.17 * 2 + 0.17 * 2,
+    });
+  });
 });

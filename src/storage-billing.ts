@@ -196,7 +196,7 @@ function getSizeByProduct(products: Product[]): SizeByProduct {
         sizeByProduct[product.id] &&
         sizeByProduct[product.id] !== product.size
       ) {
-        throw new Error("a product cannot have different size");
+        throw new Error("a product cannot have multiple sizes");
       }
       return {
         ...sizeByProduct,
@@ -222,7 +222,6 @@ export function getTotalPrice(description: Description) {
     const dateString = formatDate(date);
     const inventory: ProductQuantity[] = description.dailyInventory[dateString];
     if (!inventory) {
-      console.log("missing inventory");
       throw new Error(`Missing inventory for day ${dateString}`);
     }
     const price: number = getInventoryPrice(
