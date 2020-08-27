@@ -210,8 +210,10 @@ function getSizeByProduct(products: Product[]): SizeByProduct {
 export function getTotalPrice(description: Description) {
   // transform data into Description
   const { fromDate, toDate } = description.billingPeriod;
+
   const sizeByProduct = getSizeByProduct(description.products);
   const stock = getStock(description.inboundShipments, toDate);
+
   let date = fromDate;
 
   const pricePerDay: Record<string, number> = {};

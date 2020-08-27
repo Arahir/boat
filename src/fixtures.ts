@@ -38,15 +38,15 @@ export const descriptionData = {
     {
       id: "BGBLINEU00001",
       lines: [
-        { product: "BGBL-TSHIRT-BLUS", quantity: 3 },
-        { product: "BGBL-TSHIRT-BLUL", quantity: 30 },
+        { product: "BGBL-TSHIRT-BLUS", quantity: 2 },
+        { product: "BGBL-TSHIRT-BLUL", quantity: 31 },
       ],
       offload_complete_time: "2020-12-11T13:00:00Z",
     },
     {
       id: "BGBLINEU00001",
       lines: [
-        { product: "BGBL-TSHIRT-BLUS", quantity: 3 },
+        { product: "BGBL-TSHIRT-BLUS", quantity: 4 },
         { product: "BGBL-TSHIRT-BLUL", quantity: 30 },
       ],
       offload_complete_time: "2020-12-21T13:00:00Z",
@@ -55,7 +55,7 @@ export const descriptionData = {
       id: "BGBLINEU00001",
       lines: [
         { product: "BGBL-TSHIRT-BLUS", quantity: 3 },
-        { product: "BGBL-TSHIRT-BLUL", quantity: 30 },
+        { product: "BGBL-TSHIRT-BLUL", quantity: 34 },
       ],
       offload_complete_time: "2021-01-21T13:00:00Z",
     },
